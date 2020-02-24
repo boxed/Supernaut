@@ -22,12 +22,19 @@ class IndexPage(Page):
     title = html.h1('Supernaut')
     welcome_text = 'This is a discography of the best acts in music!'
 
-    artists = Table(auto__model=Artist, page_size=5)
+    artists = Table(
+        auto__model=Artist, page_size=5,
+        columns__name__cell__url=lambda row, **_: row.get_absolute_url(),
+    )
     albums = Table(
         auto__model=Album,
         page_size=5,
+        columns__name__cell__url=lambda row, **_: row.get_absolute_url(),
     )
-    tracks = Table(auto__model=Track, page_size=5)
+    tracks = Table(
+        auto__model=Track,
+        page_size=5,
+    )
 
 
 def artist_page(request, artist):
@@ -36,10 +43,25 @@ def artist_page(request, artist):
     class ArtistPage(Page):
         title = html.h1(artist.name)
 
-        albums = Table(auto__rows=Album.objects.filter(artist=artist))
+        albums = Table(
+            auto__rows=Album.objects.filter(artist=artist),
+            columns__name__cell__url=lambda row, **_: row.get_absolute_url(),
+        )
         tracks = Table(auto__rows=Track.objects.filter(album__artist=artist))
 
     return ArtistPage()
+
+
+def album_page(request, artist, album):
+    album = get_object_or_404(Album, name=album, artist__name=artist)
+
+    class AlbumPage(Page):
+        title = html.h1(album)
+        text = html.a(album.artist, attrs__href=album.artist.get_absolute_url())
+
+        tracks = Table(auto__rows=Track.objects.filter(album=album))
+
+    return AlbumPage()
 
 
 # URLs -----------------------------
@@ -51,4 +73,5 @@ urlpatterns = [
     path('tracks/', Table(auto__model=Track).as_view()),
 
     path('artist/<artist>/', artist_page),
+    path('artist/<artist>/<album>/', album_page),
 ]
