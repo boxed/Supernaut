@@ -23,15 +23,9 @@ class AlbumsTable(Table):
 # Views ----------------------------
 
 def index(request):
-    return render(
-        request,
-        template_name='index.html',
-        context=dict(
-            content=AlbumsTable(
-                rows=Album.objects.all(),
-            ).bind(request=request),
-            title='Title here!',
-        )
+    return AlbumsTable(
+        title='Albums',
+        rows=Album.objects.all(),
     )
 
 
