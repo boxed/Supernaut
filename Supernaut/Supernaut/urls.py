@@ -19,18 +19,13 @@ class AlbumsTable(Table):
     artist = Column()
     year = Column()
 
-
-# Views ----------------------------
-
-def index(request):
-    return AlbumsTable(
-        title='Albums',
-        rows=Album.objects.all(),
-    )
+    class Meta:
+        title = 'Albums'
+        rows = Album.objects.all()
 
 
 # URLs -----------------------------
 
 urlpatterns = [
-    path('', index),
+    path('', AlbumsTable().as_view()),
 ]
