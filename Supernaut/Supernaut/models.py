@@ -25,6 +25,9 @@ class Album(models.Model):
     class Meta:
         ordering = ('name',)
 
+    def get_absolute_url(self):
+        return f'/artist/{self.artist}/{self}/'
+
 
 class Track(models.Model):
     name = models.CharField(max_length=255, db_index=True)
