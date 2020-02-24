@@ -26,7 +26,6 @@ class IndexPage(Page):
     albums = Table(
         auto__model=Album,
         page_size=5,
-        columns__artist__cell__url=lambda value, **_: value.get_absolute_url(),
     )
     tracks = Table(auto__model=Track, page_size=5)
 
