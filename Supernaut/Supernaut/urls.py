@@ -25,15 +25,21 @@ class IndexPage(Page):
     artists = Table(
         auto__model=Artist, page_size=5,
         columns__name__cell__url=lambda row, **_: row.get_absolute_url(),
+        columns__name__filter__include=True,
     )
     albums = Table(
         auto__model=Album,
         page_size=5,
         columns__name__cell__url=lambda row, **_: row.get_absolute_url(),
+        columns__name__filter__include=True,
+        columns__year__filter__include=True,
+        columns__year__filter__field__include=False,
+        columns__artist__filter__include=True,
     )
     tracks = Table(
         auto__model=Track,
         page_size=5,
+        columns__name__filter__include=True,
     )
 
 
@@ -46,8 +52,15 @@ def artist_page(request, artist):
         albums = Table(
             auto__rows=Album.objects.filter(artist=artist),
             columns__name__cell__url=lambda row, **_: row.get_absolute_url(),
+            columns__name__filter__include=True,
+            columns__year__filter__include=True,
+            columns__year__filter__field__include=False,
+            columns__artist__include=False,
         )
-        tracks = Table(auto__rows=Track.objects.filter(album__artist=artist))
+        tracks = Table(
+            auto__rows=Track.objects.filter(album__artist=artist),
+            columns__name__filter__include=True,
+        )
 
     return ArtistPage()
 
@@ -59,7 +72,11 @@ def album_page(request, artist, album):
         title = html.h1(album)
         text = html.a(album.artist, attrs__href=album.artist.get_absolute_url())
 
-        tracks = Table(auto__rows=Track.objects.filter(album=album))
+        tracks = Table(
+            auto__rows=Track.objects.filter(album=album),
+            columns__name__filter__include=True,
+            columns__album__include=False,
+        )
 
     return AlbumPage()
 
