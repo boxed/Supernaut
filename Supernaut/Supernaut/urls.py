@@ -1,3 +1,9 @@
+from django.contrib.auth import (
+    login,
+    logout,
+)
+from django.contrib.auth.models import User
+from django.http import HttpResponseRedirect
 from django.shortcuts import get_object_or_404
 from django.urls import path
 from iommi import (
@@ -22,7 +28,19 @@ setup_example_data()
 
 class IndexPage(Page):
     title = html.h1('Supernaut')
-    welcome_text = 'This is a discography of the best acts in music!'
+    welcome_text = html.div('This is a discography of the best acts in music!')
+
+    log_in = html.a(
+        'Log in',
+        attrs__href='/log_in/',
+        include=lambda request, **_: not request.user.is_authenticated,
+    )
+
+    log_out = html.a(
+        'Log out',
+        attrs__href='/log_out/',
+        include=lambda request, **_: request.user.is_authenticated,
+    )
 
     artists = Table(
         auto__model=Artist, page_size=5,
@@ -37,8 +55,12 @@ class IndexPage(Page):
         columns__year__filter__include=True,
         columns__year__filter__field__include=False,
         columns__artist__filter__include=True,
-        columns__edit=Column.edit(),
-        columns__delete=Column.delete(),
+        columns__edit=Column.edit(
+            include=lambda request, **_: request.user.is_staff,
+        ),
+        columns__delete=Column.delete(
+            include=lambda request, **_: request.user.is_staff,
+        ),
     )
     tracks = Table(
         auto__model=Track,
@@ -95,6 +117,16 @@ def delete_album(request, artist, album):
     return Form.delete(auto__instance=album)
 
 
+def log_in(request):
+    login(request, User.objects.get())
+    return HttpResponseRedirect('/')
+
+
+def log_out(request):
+    logout(request)
+    return HttpResponseRedirect('/')
+
+
 # URLs -----------------------------
 
 urlpatterns = [
@@ -107,4 +139,7 @@ urlpatterns = [
     path('artist/<artist>/<album>/', album_page),
     path('artist/<artist>/<album>/edit/', edit_album),
     path('artist/<artist>/<album>/delete/', delete_album),
+
+    path('log_in/', log_in),
+    path('log_out/', log_out),
 ]
