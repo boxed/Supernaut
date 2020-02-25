@@ -7,6 +7,7 @@ from django.http import HttpResponseRedirect
 from django.shortcuts import get_object_or_404
 from django.urls import path
 from iommi import (
+    Action,
     Column,
     Form,
     Page,
@@ -47,6 +48,7 @@ class AlbumTable(Table):
         columns__delete = Column.delete(
             include=lambda request, **_: request.user.is_staff,
         )
+        actions__create_album = Action(attrs__href='/albums/create/')
 
 
 class ArtistTable(Table):
@@ -131,6 +133,7 @@ def log_out(request):
 urlpatterns = [
     path('', IndexPage().as_view()),
     path('albums/', AlbumTable(auto__model=Album).as_view()),
+    path('albums/create/', Form.create(auto__model=Album).as_view()),
     path('artists/', ArtistTable(auto__model=Artist).as_view()),
     path('tracks/', TrackTable(auto__model=Track).as_view()),
 
