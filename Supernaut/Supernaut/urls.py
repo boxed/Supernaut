@@ -1,6 +1,8 @@
 from django.shortcuts import get_object_or_404
 from django.urls import path
 from iommi import (
+    Column,
+    Form,
     Page,
     Table,
     html,
@@ -35,6 +37,8 @@ class IndexPage(Page):
         columns__year__filter__include=True,
         columns__year__filter__field__include=False,
         columns__artist__filter__include=True,
+        columns__edit=Column.edit(),
+        columns__delete=Column.delete(),
     )
     tracks = Table(
         auto__model=Track,
@@ -81,6 +85,16 @@ def album_page(request, artist, album):
     return AlbumPage()
 
 
+def edit_album(request, artist, album):
+    album = get_object_or_404(Album, name=album, artist__name=artist)
+    return Form.edit(auto__instance=album)
+
+
+def delete_album(request, artist, album):
+    album = get_object_or_404(Album, name=album, artist__name=artist)
+    return Form.delete(auto__instance=album)
+
+
 # URLs -----------------------------
 
 urlpatterns = [
@@ -91,4 +105,6 @@ urlpatterns = [
 
     path('artist/<artist>/', artist_page),
     path('artist/<artist>/<album>/', album_page),
+    path('artist/<artist>/<album>/edit/', edit_album),
+    path('artist/<artist>/<album>/delete/', delete_album),
 ]
