@@ -39,7 +39,7 @@ class TrackTable(Table):
 class AlbumTable(Table):
     class Meta:
         auto__model = Album
-        page_size = 5
+        page_size = 20
         columns__name__cell__url = lambda row, **_: row.get_absolute_url()
         columns__name__filter__include = True
         columns__year__filter__include = True
@@ -79,12 +79,22 @@ class IndexPage(Page):
         include=lambda request, **_: request.user.is_authenticated,
     )
 
-    albums = Table(
+    albums = AlbumTable(
         auto__model=Album,
-        columns__album_art=Column(
-            attr=None,
-            cell__template=Template('<td><img height="30" src="/static/album_art/{{ row.artist }}/{{ row.name }}.jpg"></td>'),
-        ),
+        tag='div',
+        header__template=None,
+        cell__tag=None,
+        row__template=Template("""
+            <div class="card" style="width: 15rem; display: inline-block;" {{ cells.attrs }}>
+                <img class="card-img-top" src="/static/album_art/{{ row.artist }}/{{ row.url_name|urlencode }}.jpg">
+                <div class="card-body text-center">
+                    <h5>{{ cells.name }}</h5>
+                    <p class="card-text">
+                        {{ cells.artist }}
+                    </p>
+                </div>
+            </div>
+        """),
     )
 
 

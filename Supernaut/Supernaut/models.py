@@ -22,6 +22,10 @@ class Album(models.Model):
     def __str__(self):
         return self.name
 
+    def url_name(self):
+        # Windows compatibility
+        return self.name.replace(':', '')
+
     class Meta:
         ordering = ('name',)
 
