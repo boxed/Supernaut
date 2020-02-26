@@ -8,7 +8,12 @@ from django.contrib.auth.models import User
 from django.http import HttpResponseRedirect
 from django.shortcuts import get_object_or_404
 from django.template import Template
-from django.urls import path
+from django.urls import (
+    path,
+    include,
+)
+import debug_toolbar
+
 from iommi import (
     Action,
     Column,
@@ -148,6 +153,8 @@ def log_out(request):
 # URLs -----------------------------
 
 urlpatterns = [
+    path('__debug__/', include(debug_toolbar.urls)),
+
     path('', IndexPage().as_view()),
     path('albums/', AlbumTable(auto__model=Album).as_view()),
     path('albums/create/', Form.create(auto__model=Album).as_view()),
