@@ -37,7 +37,7 @@ setup_example_data()
 
 class TrackTable(Table):
     class Meta:
-        auto__model = Track
+        auto__rows = Track.objects.all().select_related('album__artist')
         columns__name__filter__include = True
 
 
