@@ -21,6 +21,8 @@ from iommi import (
     Page,
     Table,
     html,
+    Menu,
+    MenuItem,
 )
 
 from .example_data import setup_example_data
@@ -31,6 +33,18 @@ from .models import (
 )
 
 setup_example_data()
+
+
+# Menu -----------------------------
+
+class SupernautMenu(Menu):
+    home = MenuItem(url='/')
+    artists = MenuItem()
+    albums = MenuItem()
+    tracks = MenuItem()
+
+    class Meta:
+        attrs__class = {'fixed-top': True}
 
 
 # Tables ---------------------------
@@ -68,7 +82,10 @@ class ArtistTable(Table):
 
 # Pages ----------------------------
 
+
 class IndexPage(Page):
+    menu = SupernautMenu()
+
     title = html.h1('Supernaut')
     welcome_text = html.div('This is a discography of the best acts in music!')
 
