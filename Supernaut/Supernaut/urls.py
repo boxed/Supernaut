@@ -1,5 +1,6 @@
 from django.shortcuts import get_object_or_404
 from django.urls import path
+from django.utils.html import format_html
 from iommi import (
     Page,
     Table,
@@ -23,7 +24,11 @@ class IndexPage(Page):
     welcome_text = 'This is a discography of the best acts in music!'
 
     artists = Table(auto__model=Artist, page_size=5)
-    albums = Table(auto__model=Album, page_size=5)
+    albums = Table(
+        auto__model=Album,
+        page_size=5,
+        columns__artist__cell__format=lambda value, **_: format_html('<a href="/artist/{}/">{}</a>', value, value)
+    )
     tracks = Table(auto__model=Track, page_size=5)
 
 
