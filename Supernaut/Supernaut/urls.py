@@ -1,3 +1,5 @@
+from django.conf import settings
+from django.conf.urls.static import static
 from django.contrib.auth import (
     login,
     logout,
@@ -5,6 +7,7 @@ from django.contrib.auth import (
 from django.contrib.auth.models import User
 from django.http import HttpResponseRedirect
 from django.shortcuts import get_object_or_404
+from django.template import Template
 from django.urls import path
 from iommi import (
     Action,
@@ -76,9 +79,13 @@ class IndexPage(Page):
         include=lambda request, **_: request.user.is_authenticated,
     )
 
-    artists = ArtistTable(page_size=5)
-    albums = AlbumTable()
-    tracks = TrackTable(page_size=5)
+    albums = Table(
+        auto__model=Album,
+        columns__album_art=Column(
+            attr=None,
+            cell__template=Template('<td><img height="30" src="/static/album_art/{{ row.artist }}/{{ row.name }}.jpg"></td>'),
+        ),
+    )
 
 
 def artist_page(request, artist):
@@ -144,4 +151,4 @@ urlpatterns = [
 
     path('log_in/', log_in),
     path('log_out/', log_out),
-]
+] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
