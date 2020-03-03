@@ -24,6 +24,7 @@ from iommi import (
     Menu,
     MenuItem,
 )
+from iommi.admin import Admin
 
 from .example_data import setup_example_data
 from .models import (
@@ -169,6 +170,11 @@ def log_out(request):
 
 # URLs -----------------------------
 
+class MyAdmin(Admin):
+    class Meta:
+        pass
+
+
 urlpatterns = [
     path('__debug__/', include(debug_toolbar.urls)),
 
@@ -185,4 +191,6 @@ urlpatterns = [
 
     path('log_in/', log_in),
     path('log_out/', log_out),
+
+    path('iommi-admin/', include(MyAdmin.urls())),
 ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
