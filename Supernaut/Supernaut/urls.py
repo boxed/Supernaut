@@ -24,6 +24,38 @@ from .models import (
 setup_example_data()
 
 
+# Tables ---------------------------
+
+class TrackTable(Table):
+    class Meta:
+        auto__model = Track
+        columns__name__filter__include = True
+
+
+class AlbumTable(Table):
+    class Meta:
+        auto__model = Album
+        page_size = 5
+        columns__name__cell__url = lambda row, **_: row.get_absolute_url()
+        columns__name__filter__include = True
+        columns__year__filter__include = True
+        columns__year__filter__field__include = False
+        columns__artist__filter__include = True
+        columns__edit = Column.edit(
+            include=lambda request, **_: request.user.is_staff,
+        )
+        columns__delete = Column.delete(
+            include=lambda request, **_: request.user.is_staff,
+        )
+
+
+class ArtistTable(Table):
+    class Meta:
+        auto__model = Artist
+        columns__name__cell__url = lambda row, **_: row.get_absolute_url()
+        columns__name__filter__include = True
+
+
 # Pages ----------------------------
 
 class IndexPage(Page):
@@ -42,31 +74,9 @@ class IndexPage(Page):
         include=lambda request, **_: request.user.is_authenticated,
     )
 
-    artists = Table(
-        auto__model=Artist, page_size=5,
-        columns__name__cell__url=lambda row, **_: row.get_absolute_url(),
-        columns__name__filter__include=True,
-    )
-    albums = Table(
-        auto__model=Album,
-        page_size=5,
-        columns__name__cell__url=lambda row, **_: row.get_absolute_url(),
-        columns__name__filter__include=True,
-        columns__year__filter__include=True,
-        columns__year__filter__field__include=False,
-        columns__artist__filter__include=True,
-        columns__edit=Column.edit(
-            include=lambda request, **_: request.user.is_staff,
-        ),
-        columns__delete=Column.delete(
-            include=lambda request, **_: request.user.is_staff,
-        ),
-    )
-    tracks = Table(
-        auto__model=Track,
-        page_size=5,
-        columns__name__filter__include=True,
-    )
+    artists = ArtistTable(page_size=5)
+    albums = AlbumTable()
+    tracks = TrackTable(page_size=5)
 
 
 def artist_page(request, artist):
@@ -75,18 +85,8 @@ def artist_page(request, artist):
     class ArtistPage(Page):
         title = html.h1(artist.name)
 
-        albums = Table(
-            auto__rows=Album.objects.filter(artist=artist),
-            columns__name__cell__url=lambda row, **_: row.get_absolute_url(),
-            columns__name__filter__include=True,
-            columns__year__filter__include=True,
-            columns__year__filter__field__include=False,
-            columns__artist__include=False,
-        )
-        tracks = Table(
-            auto__rows=Track.objects.filter(album__artist=artist),
-            columns__name__filter__include=True,
-        )
+        albums = AlbumTable(auto__rows=Album.objects.filter(artist=artist))
+        tracks = TrackTable(auto__rows=Track.objects.filter(album__artist=artist))
 
     return ArtistPage()
 
@@ -98,9 +98,8 @@ def album_page(request, artist, album):
         title = html.h1(album)
         text = html.a(album.artist, attrs__href=album.artist.get_absolute_url())
 
-        tracks = Table(
+        tracks = TrackTable(
             auto__rows=Track.objects.filter(album=album),
-            columns__name__filter__include=True,
             columns__album__include=False,
         )
 
@@ -131,9 +130,9 @@ def log_out(request):
 
 urlpatterns = [
     path('', IndexPage().as_view()),
-    path('albums/', Table(auto__model=Album).as_view()),
-    path('artists/', Table(auto__model=Artist).as_view()),
-    path('tracks/', Table(auto__model=Track).as_view()),
+    path('albums/', AlbumTable(auto__model=Album).as_view()),
+    path('artists/', ArtistTable(auto__model=Artist).as_view()),
+    path('tracks/', TrackTable(auto__model=Track).as_view()),
 
     path('artist/<artist>/', artist_page),
     path('artist/<artist>/<album>/', album_page),
