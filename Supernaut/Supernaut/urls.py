@@ -12,6 +12,8 @@ from django.urls import (
     path,
     include,
 )
+from django.utils.translation import gettext as _
+
 import debug_toolbar
 
 from iommi import (
@@ -39,10 +41,10 @@ setup_example_data()
 # Menu -----------------------------
 
 class SupernautMenu(Menu):
-    home = MenuItem(url='/')
-    artists = MenuItem()
-    albums = MenuItem()
-    tracks = MenuItem()
+    home = MenuItem(url='/', display_name=_('Home'))
+    artists = MenuItem(display_name=_('Artists'))
+    albums = MenuItem(display_name=_('Albums'))
+    tracks = MenuItem(display_name=_('Tracks'))
 
     class Meta:
         attrs__class = {'fixed-top': True}
@@ -71,7 +73,7 @@ class AlbumTable(Table):
         columns__delete = Column.delete(
             include=lambda request, **_: request.user.is_staff,
         )
-        actions__create_album = Action(attrs__href='/albums/create/')
+        actions__create_album = Action(attrs__href='/albums/create/', display_name=_('Create album'))
 
 
 class ArtistTable(Table):
@@ -87,17 +89,17 @@ class ArtistTable(Table):
 class IndexPage(Page):
     menu = SupernautMenu()
 
-    title = html.h1('Supernaut')
-    welcome_text = html.div('This is a discography of the best acts in music!')
+    title = html.h1(_('Supernaut'))
+    welcome_text = html.div(_('This is a discography of the best acts in music!'))
 
     log_in = html.a(
-        'Log in',
+        _('Log in'),
         attrs__href='/log_in/',
         include=lambda request, **_: not request.user.is_authenticated,
     )
 
     log_out = html.a(
-        'Log out',
+        _('Log out'),
         attrs__href='/log_out/',
         include=lambda request, **_: request.user.is_authenticated,
     )
@@ -179,7 +181,7 @@ urlpatterns = [
     path('__debug__/', include(debug_toolbar.urls)),
 
     path('', IndexPage().as_view()),
-    path('albums/', AlbumTable(auto__model=Album).as_view()),
+    path('albums/', AlbumTable(auto__model=Album, columns__year__bulk__include=True).as_view()),
     path('albums/create/', Form.create(auto__model=Album).as_view()),
     path('artists/', ArtistTable(auto__model=Artist).as_view()),
     path('tracks/', TrackTable(auto__model=Track).as_view()),

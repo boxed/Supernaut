@@ -1,0 +1,95 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2020-10-06 13:51+0200\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+#: models.py:6 models.py:21 models.py:38
+msgid "name"
+msgstr "namn"
+
+#: models.py:13 models.py:22
+msgid "artist"
+msgstr "artist"
+
+#: models.py:14
+msgid "artists"
+msgstr "artister"
+
+#: models.py:23
+msgid "year"
+msgstr "år"
+
+#: models.py:30 models.py:40
+msgid "album"
+msgstr "album"
+
+#: models.py:31
+msgid "albums"
+msgstr "album"
+
+#: models.py:39
+msgid "index"
+msgstr "index"
+
+#: models.py:41
+msgid "duration"
+msgstr "längd"
+
+#: models.py:48
+msgid "track"
+msgstr "spår"
+
+#: models.py:49
+msgid "tracks"
+msgstr "spår"
+
+#: urls.py:44
+msgid "Home"
+msgstr "Hem"
+
+#: urls.py:45
+msgid "Artists"
+msgstr "Artister"
+
+#: urls.py:46
+msgid "Albums"
+msgstr "Album"
+
+#: urls.py:47
+msgid "Tracks"
+msgstr "Spår"
+
+#: urls.py:76
+msgid "Create album"
+msgstr "Skapa album"
+
+#: urls.py:92
+msgid "Supernaut"
+msgstr "Supernaut"
+
+#: urls.py:93
+msgid "This is a discography of the best acts in music!"
+msgstr "Detta är en diskografi över dom bästa banden!"
+
+#: urls.py:96
+msgid "Log in"
+msgstr "Logga in"
+
+#: urls.py:102
+msgid "Log out"
+msgstr "Logga ut"
